@@ -1,16 +1,16 @@
 from django import forms
 from .models import Category, TradePost, Negotiation, Offer
 
-class TradePostForm(forms.Form):
-    category = forms.ModelChoiceField(
-        queryset=Category.objects.all(),
-        label="Select Post Category"
-    )
+class TradePostForm(forms.ModelForm):
     class Meta:
         model = TradePost
         fields = ['title', 'description', 'image', 'category']
+        # Just Adding label to category, Category will be populated by .all() by default
+        labels = {
+            'category': 'Select Post Category',
+        }
 
-class NegotiationCreateForm(forms.ModelForm):
+class NegotiationForm(forms.ModelForm):
     message = forms.CharField(
         required=False,
         max_length=400,
@@ -25,17 +25,16 @@ class NegotiationCreateForm(forms.ModelForm):
     class Meta:
         model = Negotiation
         fields = ['offered_post']
-        widgets = {
-            'offered_post': forms.Select(attrs={'class': 'form-select'}),
-        }
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['offered_post'].queryset = TradePost.objects.filter(
-                owner=user, 
+                owner=user,
                 status="O"
             )
+            self.fields['offered_post'].label = "Select your Post to Offer"
+            
 
 
 class CounterOfferForm(forms.ModelForm):
@@ -44,9 +43,7 @@ class CounterOfferForm(forms.ModelForm):
         fields = ['offered_item_details']
         widgets = {
             'offered_item_details': forms.Textarea(attrs={
-                'rows': 3, 
-                'placeholder': 'Write your reply or counter-offer...',
-                'class': 'form-control'
+                'placeholder': 'Write your reply or counter-offer...'
             })
         }
         labels = {
