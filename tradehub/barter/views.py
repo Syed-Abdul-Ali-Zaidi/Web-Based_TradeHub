@@ -13,6 +13,7 @@ from django.db.models import Q
 # 6. negotiation_create_view(request, post_id)
 # 7. negotiation_delete_view(request, negotiation_id)
 # 8. negotiation_detail_view(request, negotiation_id) {Will be used for creating Counter offers}
+# 9. my_offers_list_view(request, user_id) {Gives Posts on which user has made offer}
 
 # 9. register_view(request)
 
