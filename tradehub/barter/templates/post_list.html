@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}Barter{% endblock %}
+
+{% block content %}
+
+<h1>Available Listings</h1>
+
+{% for post in posts %}
+    <h3>{{ post.title }}</h3>
+    <p>{{ post.description }}</p>
+
+    <a class="btn btn-primary"
+       href="{% url 'negotiation_create_view' post.id %}">
+        Create Negotiation
+    </a>
+{% empty %}
+    <p>No listings available.</p>
+{% endfor %}
+
+{% endblock %}
