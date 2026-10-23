@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import TradePost, Negotiation, Offer
-from .forms import NegotiationForm, CounterOfferForm
+from .forms import NegotiationForm, CounterOfferForm, TradePostForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 
@@ -88,3 +88,59 @@ def negotiation_detail_view(request, negotiation_id):
         form = CounterOfferForm()
 
     return render(request, 'negotiation_detail.html', {'form': form, 'negotiation': negotiation, 'chat_messages': chat_messages})
+
+#3 
+def post_create_view(request):
+    """Allows an authenticated user to list a new item for trade."""
+    if request.method == "POST":
+        form = TradePostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.owner = request.user  # Assign the logged-in user as the owner
+            post.save()
+            return redirect('post_list_view')  # Redirect back to the feed/list view
+    else:
+        form = TradePostForm()
+        
+    return render(request, 'post_create.html', {'form': form})
+
+
+#1
+def post_list_view(request):
+    """Displays a list of all trade posts."""
+    posts = TradePost.objects.filter(status='O').order_by('-date_created')  # Only show open posts
+    return render(request, 'post_list.html', {'posts': posts})
+
+#2
+def my_post_list_view(request, user_id):
+    """Displays a list of trade posts created by the logged-in user."""
+    if request.user.id != user_id:
+        return redirect('post_list_view')  # Redirect to the main feed if the user is not the owner
+
+    posts = TradePost.objects.filter(owner=request.user).order_by('-date_created')
+    return render(request, 'my_post_list.html', {'posts': posts})
+
+
+#4
+def post_delete_view(request, post_id):
+    """Allows the owner of a trade post to delete it."""
+    post = get_object_or_404(TradePost, pk=post_id, owner=request.user)
+
+    if request.method == "POST":
+        post.delete()
+        return redirect('my_post_list_view', user_id=request.user.id)
+
+    return render(request, 'post_confirm_delete.html', {'post': post})
+
+
+#5
+def negotiation_list_view(request, post_id):
+    """Displays a list of negotiations for a specific trade post."""
+    post = get_object_or_404(TradePost, pk=post_id)
+
+    # Ensure that only the owner of the post can view its negotiations
+    if post.owner != request.user:
+        return redirect('post_list_view')  # Redirect to the main feed if the user is not the owner
+
+    negotiations = Negotiation.objects.filter(requested_post=post).order_by('-date_created')
+    return render(request, 'negotiation_list.html', {'negotiations': negotiations, 'post': post})   
