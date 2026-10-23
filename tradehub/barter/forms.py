@@ -1,5 +1,7 @@
 from django import forms
 from .models import Category, TradePost, Negotiation, Offer
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 class TradePostForm(forms.ModelForm):
     class Meta:
@@ -34,9 +36,20 @@ class NegotiationForm(forms.ModelForm):
                 status="O"
             )
             self.fields['offered_post'].label = "Select your Post to Offer"
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        message = cleaned_data.get('message')
+        offered_post = cleaned_data.get('offered_post')
+
+        if not message and not offered_post:
+            raise forms.ValidationError(
+                "Please Select a Post to offer or Provide Text."
+            )
+
+        return cleaned_data
             
-
-
 class CounterOfferForm(forms.ModelForm):
     class Meta:
         model = Offer
@@ -49,3 +62,9 @@ class CounterOfferForm(forms.ModelForm):
         labels = {
             'offered_item_details': 'Message / Counter-Offer'
         }
+
+class UserRegistrationForm(UserCreationForm):
+    emial = forms.EmailField()
+    class Meta:
+        model = User
+        fields = ('username', 'emial', 'password1', 'password2')

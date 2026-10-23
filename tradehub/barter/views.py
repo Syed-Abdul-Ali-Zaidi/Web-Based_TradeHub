@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from .models import TradePost, Negotiation, Offer
-from .forms import NegotiationForm, CounterOfferForm, TradePostForm
+from .forms import NegotiationForm, CounterOfferForm, TradePostForm, UserRegistrationForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
 
 # 1. post_list_view(request)
 # 2. my_post_list_view(request, user_id)
@@ -30,6 +32,7 @@ def post_list_view(request):
     return render(request, 'post_list.html', {'posts': posts})
 
 #2
+@login_required
 def my_post_list_view(request, user_id):
     """Displays a list of trade posts created by the logged-in user."""
     if request.user.pk != user_id:
@@ -39,6 +42,7 @@ def my_post_list_view(request, user_id):
     return render(request, 'my_post_list.html', {'posts': posts})
 
 #3 
+@login_required
 def post_create_view(request):
     """Allows an authenticated user to list a new item for trade."""
     if request.method == "POST":
@@ -55,6 +59,7 @@ def post_create_view(request):
     return render(request, 'post_create.html', {'form': form})
 
 #4
+@login_required
 def post_delete_view(request, post_id):
     """Allows the owner of a trade post to delete it."""
     post = get_object_or_404(TradePost, pk=post_id, owner=request.user)
@@ -86,6 +91,7 @@ def post_detail_view(request, post_id):
     return render(request, 'negotiation_list.html', {'negotiations': negotiations, 'post': post})
 
 # 6
+@login_required
 def negotiation_create_view(request, post_id):
     requested_post = get_object_or_404(TradePost, pk=post_id)
 
@@ -116,6 +122,7 @@ def negotiation_create_view(request, post_id):
     return render(request, 'negotiation_create.html', {'form': form, 'requested_post': requested_post})
 
 # 7
+@login_required
 def negotiation_delete_view(request, negotiation_id):
     negotiation = get_object_or_404(
                     Negotiation,
@@ -131,6 +138,7 @@ def negotiation_delete_view(request, negotiation_id):
     return render(request, 'negotiation_delete.html', {'negotiation': negotiation})
 
 # 8 Making counter offer or Viewing the Chat(Waiting for Response from opposite party)
+@login_required
 def negotiation_detail_view(request, negotiation_id):
     negotiation = get_object_or_404(
                     Negotiation,
@@ -152,3 +160,18 @@ def negotiation_detail_view(request, negotiation_id):
         form = CounterOfferForm()
 
     return render(request, 'negotiation_detail.html', {'form': form, 'negotiation': negotiation, 'chat_messages': chat_messages})
+
+# 10
+def register_view(request):
+    if request.method == "POST":
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.changed_data['password1'])
+            user.save()
+            login(request, user)
+            return redirect('post_list_view')
+    else:
+        form = UserRegistrationForm()
+
+    return render(request, 'registration/register.html', {'form': form})

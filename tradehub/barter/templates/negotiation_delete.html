@@ -1,6 +1,14 @@
-nego_delete
 {% extends "layout.html" %}
 
 {% block title %} Barter {% endblock %}
 
-{% block content %} Confirmation Page for deleting a Negotiation {% endblock %}
+{% block content %}
+Confirmation Page for deleting a Negotiation
+
+Are you sure you want to delete this Offer?
+
+<form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger">Delete</button>
+</form>
+{% endblock %}
