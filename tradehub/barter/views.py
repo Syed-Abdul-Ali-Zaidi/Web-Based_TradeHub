@@ -161,6 +161,22 @@ def negotiation_detail_view(request, negotiation_id):
 
     return render(request, 'negotiation_detail.html', {'form': form, 'negotiation': negotiation, 'chat_messages': chat_messages})
 
+# 9
+@login_required 
+def my_offers_list_view(request, user_id):
+    '''Simply returns Negotiations, Negotiation already have Requested_post object as well as Offer_post object'''
+    if request.user.pk != user_id:
+            return redirect('post_list_view')  # Redirect to the main feed if the user is not the owner
+
+    my_negotiations = Negotiation.objects.filter(proposer= request.user
+                        ).select_related(   # select_related all fetch specified objects along with Nego obj
+                            'requested_post', 
+                            'offered_post', 
+                            'requested_post__owner'
+                        ).order_by('-date_created')
+
+    return render(request, 'my_offers_list.html', {'my_negotiations': my_negotiations})
+
 # 10
 def register_view(request):
     if request.method == "POST":

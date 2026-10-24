@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %} Barter {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>My Sent Trade Proposals</h2>
+    
+    {% for nego in my_negotiations %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <!-- Target Post you want -->
+                <h5 class="card-title">Target Item: {{ nego.requested_post.title }}</h5>
+                <h6 class="text-muted">Target Owner: {{ nego.requested_post.owner.username }}</h6>
+                
+                <hr>
+                
+                <!-- What you offered -->
+                <p class="mb-1">
+                    <strong>Your Offered Item:</strong> 
+                    {% if nego.offered_post %}
+                        {{ nego.offered_post.title }}
+                    {% else %}
+                        <em>No item offered (Monetary/Message only)</em>
+                    {% endif %}
+                </p>
+                
+                <!-- Status & Link to Chat/Detail View -->
+                <p>
+                    <strong>Status:</strong> 
+                    <span class="badge bg-secondary">{{ nego.status }}</span>
+                </p>
+                
+                <a href="{% url 'negotiation_detail_view' nego.pk %}" class="btn btn-primary btn-sm">
+                    View Details
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">You haven't sent any trade proposals yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}
