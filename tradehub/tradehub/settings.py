@@ -154,4 +154,4 @@ MAILERS = {
 LOGIN_URL = '/accounts/login'
 
 LOGIN_REDIRECT_URL = '/barter/'
-LOGOUT_REDIRECT_URL = '/barter/'
+#LOGOUT_REDIRECT_URL = '/barter/'
