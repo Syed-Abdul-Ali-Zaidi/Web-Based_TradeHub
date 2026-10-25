@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %} Barter {% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card shadow-sm p-4 text-center">
+        <h3 class="text-danger mb-3">Delete Post</h3>
+        <p>Are you sure you want to delete <strong>"{{ post.title }}"</strong>? This action cannot be undone.</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'my_post_list_view' request.user.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

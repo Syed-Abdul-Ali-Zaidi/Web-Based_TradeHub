@@ -2,4 +2,14 @@
 
 {% block title %} Barter {% endblock %}
 
-{% block content %} Hello World {% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">Welcome to TradeHub</h1>
+            <p class="col-md-8 fs-4">The ultimate platform to barter your items securely and effortlessly without monetary exchange.</p>
+            <a href="{% url 'post_list_view' %}" class="btn btn-primary btn-lg">Browse Marketplace</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
