@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from .models import TradePost, Negotiation, Offer, Category
+from .models import TradePost, Negotiation, Offer, Category, Advertisement
 from .forms import NegotiationForm, CounterOfferForm, TradePostForm, UserRegistrationForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
+from django.utils import timezone
 
 # 1. post_list_view(request)
 # 2. my_post_list_view(request, user_id)
@@ -45,6 +46,15 @@ def post_list_view(request):
 
     if category_id:
         posts = posts.filter(category=category_id)
+
+
+    now = timezone.now()
+    active_ads = Advertisement.objects.filter(
+        is_active=True
+    ).filter(
+        Q(date_start__isnull=True) | Q(date_start__lte=now),
+        Q(date_end__isnull=True) | Q(date_end__gte=now),
+    )
         
     return render(request, 'post_list.html', {
         'posts': posts,
@@ -53,6 +63,11 @@ def post_list_view(request):
         'category': category_id,
         'status_choices': TradePost.TRADEPOST_STATUS_CHOICES,
         'category_choices': Category.objects.all(),
+
+        # Advertisements
+        "header_ad": active_ads.filter(placement="HE").first(),
+        "sidebar_ads": active_ads.filter(placement="SB"),
+        "feed_ad": active_ads.filter(placement="FS").first(),
     })
 
 #2
@@ -145,7 +160,7 @@ def negotiation_create_view(request, post_id):
 
     # Prevent users from negotiating with themselves
     if requested_post.owner == request.user:
-        return redirect('negotiation_list_view', post_id=requested_post.pk)
+        return redirect('post_detail_view', post_id=requested_post.pk)
     
     if request.method == "POST":
         form = NegotiationForm(request.POST, user= request.user)
@@ -181,7 +196,7 @@ def negotiation_delete_view(request, negotiation_id):
     if request.method == "POST":
         post_id = negotiation.requested_post.pk
         negotiation.delete()
-        return redirect('negotiation_list_view', post_id=post_id)
+        return redirect('post_detail_view', post_id=post_id)
     
     return render(request, 'negotiation_delete.html', {'negotiation': negotiation})
 
@@ -231,7 +246,6 @@ def register_view(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.changed_data['password1'])
             user.save()
             login(request, user)
             return redirect('post_list_view')
