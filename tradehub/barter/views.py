@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import TradePost, Negotiation, Offer
+from .models import TradePost, Negotiation, Offer, Category
 from .forms import NegotiationForm, CounterOfferForm, TradePostForm, UserRegistrationForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
@@ -28,8 +28,32 @@ def index(request):
 #1
 def post_list_view(request):
     """Displays a list of all trade posts."""
+    search = request.GET.get("q")
+    status_id = request.GET.get("status")
+    category_id = request.GET.get("category")
+
     posts = TradePost.objects.order_by('-date_created')  # will show all posts
-    return render(request, 'post_list.html', {'posts': posts})
+
+    if search:
+        posts = posts.filter(
+            Q(title__icontains=search) |
+            Q(description__icontains=search)
+        )
+
+    if status_id:
+        posts = posts.filter(status=status_id)
+
+    if category_id:
+        posts = posts.filter(category=category_id)
+        
+    return render(request, 'post_list.html', {
+        'posts': posts,
+        'search': search,
+        'status': status_id,
+        'category': category_id,
+        'status_choices': TradePost.TRADEPOST_STATUS_CHOICES,
+        'category_choices': Category.objects.all(),
+    })
 
 #2
 @login_required
@@ -38,8 +62,32 @@ def my_post_list_view(request, user_id):
     if request.user.pk != user_id:
         return redirect('post_list_view')  # Redirect to the main feed if the user is not the owner
 
+    search = request.GET.get("q")
+    status_id = request.GET.get("status")
+    category_id = request.GET.get("category")
+
     posts = TradePost.objects.filter(owner=request.user).order_by('-date_created')
-    return render(request, 'my_post_list.html', {'posts': posts})
+
+    if search:
+            posts = posts.filter(
+                Q(title__icontains=search) |
+                Q(description__icontains=search)
+            )
+    
+    if status_id:
+        posts = posts.filter(status=status_id)
+
+    if category_id:
+        posts = posts.filter(category=category_id)
+        
+    return render(request, 'my_post_list.html', {
+        'posts': posts,
+        'search': search,
+        'status': status_id,
+        'category': category_id,
+        'status_choices': TradePost.TRADEPOST_STATUS_CHOICES,
+        'category_choices': Category.objects.all(),
+    })
 
 #3 
 @login_required
