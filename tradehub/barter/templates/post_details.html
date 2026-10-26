@@ -36,8 +36,14 @@
         {% endfor %}
     </div>
 
-    <div class="mt-4">
-        <a href="{% url 'my_post_list_view' request.user.pk %}" class="text-decoration-none">&larr; Back to My Posts</a>
-    </div>
+    {% if user.is_authenticated %}
+        <div class="mt-4">
+            <a href="{% url 'my_post_list_view' request.user.pk %}" class="text-decoration-none">&larr; Back to My Listings</a>
+        </div>
+    {% else %}
+        <div class="mt-4">
+            <a href="{% url 'post_list_view' %}" class="text-decoration-none">&larr; Back to Marketplace</a>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

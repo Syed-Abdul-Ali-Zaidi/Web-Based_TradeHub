@@ -76,19 +76,19 @@ def post_detail_view(request, post_id):
     """Displays negotiations for a specific trade post (All for owner, own offer for proposer)."""
     post = get_object_or_404(TradePost, pk=post_id)
 
-    # 1. If the user is the owner, they see all negotiations for this post
-    if post.owner == request.user:
-        negotiations = Negotiation.objects.filter(requested_post=post).order_by('-date_created')
-        
-    else:
-        # 2. If the user is not the owner, filter to only show their own negotiations for this post
-        negotiations = Negotiation.objects.filter(requested_post=post, proposer=request.user).order_by('-date_created')
-        
-        # If they aren't the owner AND haven't made any negotiation here, kick them out
-        if not negotiations.exists():
-            return redirect('post_list_view')
+    if request.user.is_authenticated:
+        # 1. If the user is the owner, they see all negotiations for this post
+        if post.owner == request.user:
+            negotiations = Negotiation.objects.filter(requested_post=post).order_by('-date_created')
 
-    return render(request, 'negotiation_list.html', {'negotiations': negotiations, 'post': post})
+        # 2. If the user is not the owner, filter to only show their own negotiations for this post        
+        elif request.user:
+            negotiations = Negotiation.objects.filter(requested_post=post, proposer=request.user).order_by('-date_created')
+            
+    else:
+        negotiations = Negotiation.objects.none()
+
+    return render(request, 'post_details.html', {'negotiations': negotiations, 'post': post})
 
 # 6
 @login_required
