@@ -1,0 +1,205 @@
+{% extends "layout.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- About Us -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="fw-bold mb-3">About TradeHub</h1>
+
+            <p class="lead">
+                TradeHub is a web-based barter platform that allows users
+                to exchange items with one another. Our goal is to make
+                trading simple by helping people discover useful items,
+                propose exchanges, and give their belongings a new purpose.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Our Mission -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="fw-bold mb-3">Our Mission</h2>
+
+            <p>
+                Our mission is to provide a convenient platform where
+                people can exchange goods without relying entirely on
+                traditional buying and selling. TradeHub allows users
+                to list their items, explore available listings, and
+                make offers based on their needs and interests.
+            </p>
+
+            <p>
+                By encouraging the reuse of existing belongings, we aim
+                to make exchanging items more accessible and promote
+                more sustainable consumption habits.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Our Features -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">What We Offer</h2>
+
+            <p>
+                TradeHub provides essential features to help users
+                participate in the barter process.
+            </p>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="h5 fw-bold">Item Listings</h3>
+
+                    <p>
+                        Users can list their items with descriptions,
+                        categories, and pictures to let others know
+                        what they have available for exchange.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="h5 fw-bold">Flexible Offers</h3>
+
+                    <p>
+                        Users can propose exchanges involving their
+                        own items and, where supported, additional
+                        money to negotiate a suitable trade.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="h5 fw-bold">Offer Management</h3>
+
+                    <p>
+                        Users can review incoming offers, respond to
+                        proposals, and keep track of their ongoing
+                        trading activities.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- How It Works -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="fw-bold mb-4 text-center">How It Works</h2>
+
+            <div class="mb-4">
+                <h3 class="h5 fw-bold">1. Explore Items</h3>
+
+                <p>
+                    Browse the marketplace and discover items listed
+                    by other users.
+                </p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="h5 fw-bold">2. Make an Offer</h3>
+
+                <p>
+                    Select an item and propose an exchange using
+                    your own items or other supported offer options.
+                </p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="h5 fw-bold">3. Negotiate an Exchange</h3>
+
+                <p>
+                    Review responses to your offer and work with the
+                    other user to reach an agreement.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Support Section -->
+    <div class="row mb-5" id="support">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="fw-bold mb-3">Support</h2>
+
+            <p>
+                We understand that users may have questions or encounter
+                difficulties while using TradeHub. This section provides
+                guidance on common issues related to the platform.
+            </p>
+
+            <div class="mb-4">
+                <h3 class="h5 fw-bold">Account Issues</h3>
+
+                <p>
+                    If you experience difficulties registering,
+                    logging in, or accessing your account, check that
+                    you have entered the correct account information.
+                </p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="h5 fw-bold">Item Listings</h3>
+
+                <p>
+                    Make sure your item descriptions, categories,
+                    and pictures accurately represent the items
+                    you want to exchange.
+                </p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="h5 fw-bold">Offers and Exchanges</h3>
+
+                <p>
+                    Review your offer details and its current status
+                    if you have questions about a proposed exchange.
+                    You can respond to offers using the options
+                    available on the platform.
+                </p>
+            </div>
+
+            <p>
+                
+                 If you need further assistance, please contact our support team at 
+                <a href="mailto:support@tradehub.com">support@tradehub.com</a>.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Marketplace Link -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2 class="fw-bold mb-3">Ready to Start Trading?</h2>
+
+            <p>
+                Explore available items and discover new exchange
+                opportunities on TradeHub.
+            </p>
+
+            <a href="{% url 'post_list_view' %}" class="btn btn-primary">
+                Explore Marketplace
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
