@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Decline Negotiation{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 text-center">
+
+                    <div class="mb-3">
+                        <i class="bi bi-exclamation-triangle text-danger"
+                           style="font-size: 3rem;"></i>
+                    </div>
+
+                    <h3 class="card-title mb-3">Decline Offer?</h3>
+
+                    <p class="text-body-secondary mb-4">
+                        Are you sure you want to decline this offer?
+                        The Offer will be marked as declined.
+                    </p>
+
+                    <form method="post" class="d-flex justify-content-center gap-2">
+                        {% csrf_token %}
+
+                        <a href="{% url 'post_detail_view' negotiation.requested_post.id %}"
+                           class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Confirm Decline
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -92,6 +92,7 @@
                             <span class="status-dot
                                 {% if nego.status == 'AC' %}status-accepted
                                 {% elif nego.status == 'DE' %}status-declined
+                                {% elif nego.status == 'WI' %}status-withdrawn
                                 {% else %}status-pending{% endif %}">
                             </span>
 
@@ -99,6 +100,8 @@
                                 Accepted
                             {% elif nego.status == "DE" %}
                                 Declined
+                            {% elif nego.status == "WI" %}
+                                Withdrawn
                             {% else %}
                                 Pending
                             {% endif %}

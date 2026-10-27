@@ -14,7 +14,7 @@ from django.utils import timezone
 
 # 5. negotiation_list_view(request, post_id) changed to post_detail_view(request, post_id) {Shows all negotiations for a post if user is owner, else shows only their own negotiation for that post}
 # 6. negotiation_create_view(request, post_id)
-# 7. negotiation_delete_view(request, negotiation_id)
+# 7. negotiation_decline_view(request, negotiation_id)
 # 8. negotiation_detail_view(request, negotiation_id) {Will be used for creating Counter offers}
 # 9. my_offers_list_view(request, user_id) {Gives Posts on which user has made offer}
 
@@ -151,6 +151,22 @@ def post_detail_view(request, post_id):
     else:
         negotiations = Negotiation.objects.none()
 
+    # Adding next_responder to each nego for btns logic
+    for negotiation in negotiations:
+        latest_offer = negotiation.offers.order_by("-date_created", "-pk").first()
+
+        if latest_offer is None:
+            # No offer obj yet: post owner's turn
+            negotiation.next_responder = negotiation.requested_post.owner
+
+        elif latest_offer.sender_id == negotiation.requested_post.owner_id:
+            # Owner countered: proposer's turn
+            negotiation.next_responder = negotiation.proposer
+
+        elif latest_offer.sender_id == negotiation.proposer_id:
+            # Proposer countered: owner's turn
+            negotiation.next_responder = negotiation.requested_post.owner
+
     return render(request, 'post_details.html', {'negotiations': negotiations, 'post': post})
 
 # 6
@@ -184,9 +200,9 @@ def negotiation_create_view(request, post_id):
 
     return render(request, 'negotiation_create.html', {'form': form, 'requested_post': requested_post})
 
-# 7 # Name have to be changed from negotiation_delete_view to negotiation_decline_view
+# 7
 @login_required
-def negotiation_delete_view(request, negotiation_id):
+def negotiation_decline_view(request, negotiation_id):
     negotiation = get_object_or_404(
                     Negotiation,
                     requested_post__owner=request.user,   # Only Post owner can declined a Nego
@@ -202,9 +218,29 @@ def negotiation_delete_view(request, negotiation_id):
 
         return redirect('post_detail_view', post_id=post_id)
     
-    return render(request, 'negotiation_delete.html', {'negotiation': negotiation})
+    return render(request, 'negotiation_decline.html', {'negotiation': negotiation})
 
-# 8 Making counter offer or Viewing the Chat(Waiting for Response from opposite party)
+# 8
+@login_required
+def negotiation_withdraw_view(request, negotiation_id):
+    negotiation = get_object_or_404(
+                    Negotiation,
+                    proposer=request.user,   # Only NEGO owner can withdraw a Nego
+                    pk=negotiation_id
+                    )
+    
+    if request.method == "POST":
+        post_id = negotiation.requested_post.pk
+
+        if negotiation.status == 'PE':
+            negotiation.status = 'WI'
+            negotiation.save(update_fields=["status"])
+
+        return redirect('post_detail_view', post_id=post_id)
+    
+    return render(request, 'negotiation_withdraw.html', {'negotiation': negotiation})
+
+# 9 Making counter offer or Viewing the Chat(Waiting for Response from opposite party)
 @login_required
 def negotiation_detail_view(request, negotiation_id):
     negotiation = get_object_or_404(
@@ -228,7 +264,7 @@ def negotiation_detail_view(request, negotiation_id):
 
     return render(request, 'negotiation_detail.html', {'form': form, 'negotiation': negotiation, 'chat_messages': chat_messages})
 
-# 9
+# 10
 @login_required 
 def my_offers_list_view(request, user_id):
     '''Simply returns Negotiations, Negotiation already have Requested_post object as well as Offer_post object'''
@@ -244,7 +280,7 @@ def my_offers_list_view(request, user_id):
 
     return render(request, 'my_offers_list.html', {'my_negotiations': my_negotiations})
 
-# 10
+# 11
 def register_view(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -258,22 +294,3 @@ def register_view(request):
 
     return render(request, 'registration/register.html', {'form': form})
 
-# 11
-@login_required
-def negotiation_withdraw_view(request, negotiation_id):
-    negotiation = get_object_or_404(
-                    Negotiation,
-                    proposer=request.user,   # Only NEGO owner can withdraw a Nego
-                    pk=negotiation_id
-                    )
-    
-    if request.method == "POST":
-        post_id = negotiation.requested_post.pk
-
-        if negotiation.status == 'PE':
-            negotiation.status = 'WI'
-            negotiation.save(update_fields=["status"])
-
-        return redirect('post_detail_view', post_id=post_id)
-    
-    return render(request, 'negotiation_withdraw.html', {'negotiation': negotiation})
