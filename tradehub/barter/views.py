@@ -184,18 +184,22 @@ def negotiation_create_view(request, post_id):
 
     return render(request, 'negotiation_create.html', {'form': form, 'requested_post': requested_post})
 
-# 7
+# 7 # Name have to be changed from negotiation_delete_view to negotiation_decline_view
 @login_required
 def negotiation_delete_view(request, negotiation_id):
     negotiation = get_object_or_404(
                     Negotiation,
-                    Q(proposer=request.user) | Q(requested_post__owner=request.user),   # Two people can delete a Negotiation: PostOwner or OfferOwner
+                    requested_post__owner=request.user,   # Only Post owner can declined a Nego
                     pk=negotiation_id
                     )
     
     if request.method == "POST":
         post_id = negotiation.requested_post.pk
-        negotiation.delete()
+
+        if negotiation.status == 'PE':
+            negotiation.status = 'DE'
+            negotiation.save(update_fields=["status"])
+
         return redirect('post_detail_view', post_id=post_id)
     
     return render(request, 'negotiation_delete.html', {'negotiation': negotiation})
@@ -253,3 +257,23 @@ def register_view(request):
         form = UserRegistrationForm()
 
     return render(request, 'registration/register.html', {'form': form})
+
+# 11
+@login_required
+def negotiation_withdraw_view(request, negotiation_id):
+    negotiation = get_object_or_404(
+                    Negotiation,
+                    proposer=request.user,   # Only NEGO owner can withdraw a Nego
+                    pk=negotiation_id
+                    )
+    
+    if request.method == "POST":
+        post_id = negotiation.requested_post.pk
+
+        if negotiation.status == 'PE':
+            negotiation.status = 'WI'
+            negotiation.save(update_fields=["status"])
+
+        return redirect('post_detail_view', post_id=post_id)
+    
+    return render(request, 'negotiation_withdraw.html', {'negotiation': negotiation})

@@ -3,12 +3,12 @@
 {% block title %} Barter {% endblock %}
 
 {% block content %}
-Confirmation Page for deleting a Negotiation
+Confirmation Page for declining a Negotiation
 
-Are you sure you want to delete this Offer?
+Are you sure you want to decline this Offer?
 
 <form method="post">
     {% csrf_token %}
-    <button class="btn btn-danger">Delete</button>
+    <button class="btn btn-danger">Decline</button>
 </form>
 {% endblock %}

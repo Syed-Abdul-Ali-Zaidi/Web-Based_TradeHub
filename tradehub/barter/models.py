@@ -32,6 +32,7 @@ class Negotiation(models.Model):
         ('PE','PENDING'),
         ('AC','ACCEPTED'),
         ('DE','DECLINED'),
+        ('WI','WITHDRAWN'),
     ]
 
     requested_post = models.ForeignKey(TradePost, on_delete=models.CASCADE, related_name='requested_negotiations')

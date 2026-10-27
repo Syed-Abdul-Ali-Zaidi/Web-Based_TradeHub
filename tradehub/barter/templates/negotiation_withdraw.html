@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %} Barter {% endblock %}
+
+{% block content %}
+Confirmation Page for Withdrawing a Negotiation
+
+Are you sure you want to withdraw this Offer?
+
+<form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger">Withdraw</button>
+</form>
+{% endblock %}
