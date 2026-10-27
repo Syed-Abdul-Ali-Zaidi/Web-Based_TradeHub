@@ -2,4 +2,11 @@
 
 {% block title %} Barter {% endblock %}
 
-{% block content %} Page for CounterOffer message and Viewing previous messages {% endblock %}
+{% block content %}
+Page for CounterOffer message and Viewing previous messages
+<form method="post" enctype="multipart/form-data" class="card shadow-sm p-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary w-100 mt-3">Send</button>
+</form>
+{% endblock %}

@@ -265,6 +265,26 @@ def negotiation_detail_view(request, negotiation_id):
     return render(request, 'negotiation_detail.html', {'form': form, 'negotiation': negotiation, 'chat_messages': chat_messages})
 
 # 10
+def negotiation_accept_view(request, negotiation_id):
+    ''' mark requested post as traded
+        mark all requested post's pending negos as declined except current nego 
+        mark offered post as traded
+        mark offered post's pending negos as declined
+        mark mark all all negos as withdrawn where offered_post is current offered post except current nego
+        '''
+    negotiation = get_object_or_404(
+                    Negotiation,
+                    Q(proposer=request.user) | Q(requested_post__owner=request.user),   # Two people can Accept a Negotiation: PostOwner or OfferOwner
+                    pk=negotiation_id
+                    )
+
+    if request.method == "POST":
+        pass
+
+    return render(request, 'negotiation_accept.html', {'negotiation': negotiation})
+
+
+# 11
 @login_required 
 def my_offers_list_view(request, user_id):
     '''Simply returns Negotiations, Negotiation already have Requested_post object as well as Offer_post object'''
@@ -280,7 +300,7 @@ def my_offers_list_view(request, user_id):
 
     return render(request, 'my_offers_list.html', {'my_negotiations': my_negotiations})
 
-# 11
+# 12
 def register_view(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -293,4 +313,5 @@ def register_view(request):
         form = UserRegistrationForm()
 
     return render(request, 'registration/register.html', {'form': form})
+
 
