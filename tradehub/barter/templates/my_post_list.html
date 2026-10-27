@@ -77,29 +77,76 @@
 
     <div class="row">
         {% for post in posts %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
+            <div class="col-md-6 col-xl-4">
+                <div class="card market-card h-100">
+
+                    <!-- Post image -->
                     {% if post.image %}
-                        <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 180px; object-fit: cover;">
+                        <img src="{{ post.image.url }}"
+                                class="card-img-top post-image"
+                                alt="{{ post.title }}">
+                    {% else %}
+                        <div class="post-image-placeholder">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
                     {% endif %}
+
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ post.title }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted small">Category: {{ post.category.name }}</h6>
-                        <p class="card-text text-muted small">{{ post.description|truncatechars:100 }}</p>
-                        
+
+                        <div class="post-category">
+                            <i class="bi bi-tag"></i>
+                            {{ post.category.name }}
+                        </div>
+
+                        <h5 class="card-title fw-semibold">
+                            {{ post.title }}
+                        </h5>
+
+                        <p class="card-text text-muted small post-description">
+                            {{ post.description|truncatechars:100 }}
+                        </p>
+
                         <div class="mt-auto">
-                            <span class="badge bg-secondary mb-2">Status: {{ post.get_status_display }}</span>
-                            <div class="d-flex gap-2">
-                                <a href="{% url 'post_detail_view' post.id %}" class="btn btn-outline-primary btn-sm w-50">View Offers</a>
-                                <a href="{% url 'post_delete_view' post.id %}" class="btn btn-outline-danger btn-sm w-50">Delete</a>
+                            <div class="small text-muted mb-3">
+                                Posted by
+                                <strong>{{ post.owner.username }}</strong>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="d-flex align-items-center gap-2">
+
+                                <a href="{% url 'post_detail_view' post.id %}"
+                                    class="btn btn-outline-secondary btn-sm flex-grow-1">
+                                    View Details
+                                </a>
+
+                                {% if request.user.is_authenticated and request.user == post.owner %}
+
+                                    <a href="{% url 'post_delete_view' post.id %}"
+                                        class="btn btn-outline-danger btn-sm delete-post-btn"
+                                        aria-label="Delete {{ post.title }}"
+                                        title="Delete post">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+
+                                {% endif %}
+
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
+
         {% empty %}
             <div class="col-12">
-                <p class="text-muted">You haven't posted any items for trade yet.</p>
+                <div class="empty-marketplace text-center py-5">
+                    <i class="bi bi-search fs-1 text-muted"></i>
+                    <h5 class="mt-3">No listings found</h5>
+                    <p class="text-muted mb-0">
+                        Try changing your search or filters.
+                    </p>
+                </div>
             </div>
         {% endfor %}
     </div>

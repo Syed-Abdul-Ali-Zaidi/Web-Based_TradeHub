@@ -79,12 +79,13 @@
             <h2 class="fw-bold mb-1">Marketplace</h2>
             <p class="text-muted mb-0">Discover items and find your next trade.</p>
         </div>
+        <a href="{% url 'post_create_view' %}" class="btn btn-success">Create New Post</a>
     </div>
 
     <!-- HEADER ADVERTISEMENT -->
     {% if header_ad %}
         <div class="market-ad header-ad mb-4">
-            <span class="ad-label">ADVERTISEMENT</span>
+            <span class="ad-label">ADVERTISEMENT {{ header_ad.title }}</span>
 
             {% if header_ad.target_url %}
                 <a href="{{ header_ad.target_url }}"
