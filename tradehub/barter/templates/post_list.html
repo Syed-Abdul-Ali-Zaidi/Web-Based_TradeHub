@@ -97,9 +97,8 @@
                     class="header-ad-media">
             {% elif header_ad.video %}
                 <video class="header-ad-media"
-                    controls muted playsinline preload="metadata">
+                    autoplay muted loop playsinline preload="auto">
                     <source src="{{ header_ad.video.url }}">
-                    Your browser does not support video playback.
                 </video>
             {% endif %}
 
@@ -201,10 +200,8 @@
                                          class="feed-ad-media">
                                 {% elif feed_ad.video %}
                                     <video class="feed-ad-media"
-                                           controls muted playsinline
-                                           preload="metadata">
+                                        autoplay muted loop playsinline preload="auto">
                                         <source src="{{ feed_ad.video.url }}">
-                                        Your browser does not support video playback.
                                     </video>
                                 {% endif %}
 
