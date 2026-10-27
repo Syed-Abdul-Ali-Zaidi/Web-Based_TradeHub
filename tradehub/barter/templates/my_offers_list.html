@@ -3,41 +3,132 @@
 {% block title %} Barter {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>My Sent Trade Proposals</h2>
-    
-    {% for nego in my_negotiations %}
-        <div class="card mb-3">
-            <div class="card-body">
-                <!-- Target Post you want -->
-                <h5 class="card-title">Target Item: {{ nego.requested_post.title }}</h5>
-                <h6 class="text-muted">Target Owner: {{ nego.requested_post.owner.username }}</h6>
-                
-                <hr>
-                
-                <!-- What you offered -->
-                <p class="mb-1">
-                    <strong>Your Offered Item:</strong> 
-                    {% if nego.offered_post %}
-                        {{ nego.offered_post.title }}
+<div class="container-fluid marketplace-container py-4">
+
+    <!-- Page heading -->
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1">My Sent Trade Proposals</h3>
+        <p class="text-muted mb-0">
+            Track the items you've requested and what you've offered in exchange.
+        </p>
+    </div>
+
+    <div class="row g-3">
+
+        {% for nego in my_negotiations %}
+            <div class="col-md-6 col-xl-4">
+                <div class="card market-card h-100">
+
+                    <!-- Requested item's image -->
+                    {% if nego.requested_post.image %}
+                        <img src="{{ nego.requested_post.image.url }}"
+                             class="card-img-top post-image"
+                             alt="{{ nego.requested_post.title }}">
                     {% else %}
-                        <em>No item offered (Monetary/Message only)</em>
+                        <div class="post-image-placeholder">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
                     {% endif %}
-                </p>
-                
-                <!-- Status & Link to Chat/Detail View -->
-                <p>
-                    <strong>Status:</strong> 
-                    <span class="badge bg-secondary">{{ nego.status }}</span>
-                </p>
-                
-                <a href="{% url 'negotiation_detail_view' nego.pk %}" class="btn btn-primary btn-sm">
-                    View Details
-                </a>
+
+                    <div class="card-body d-flex flex-column">
+
+                        <!-- Requested item -->
+                        <div class="post-category">
+                            <i class="bi bi-arrow-down-left-circle"></i>
+                            Requested Item
+                        </div>
+
+                        <h5 class="card-title fw-semibold">
+                            {{ nego.requested_post.title }}
+                        </h5>
+
+                        <p class="small text-muted mb-3">
+                            Owned by
+                            <strong>{{ nego.requested_post.owner.username }}</strong>
+                        </p>
+
+                        <hr>
+
+                        <!-- Your offered item -->
+                        <div class="post-category">
+                            <i class="bi bi-arrow-up-right-circle"></i>
+                            Your Offered Item
+                        </div>
+
+                        {% if nego.offered_post %}
+                            <div class="d-flex align-items-center gap-3 mb-3">
+
+                                {% if nego.offered_post.image %}
+                                    <img src="{{ nego.offered_post.image.url }}"
+                                         alt="{{ nego.offered_post.title }}"
+                                         class="rounded"
+                                         style="width: 70px; height: 70px; object-fit: cover;">
+                                {% else %}
+                                    <div class="post-image-placeholder rounded"
+                                         style="width: 70px; height: 70px; flex-shrink: 0;">
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+                                {% endif %}
+
+                                <div>
+                                    <h6 class="fw-semibold mb-1">
+                                        {{ nego.offered_post.title }}
+                                    </h6>
+                                    <small class="text-muted">
+                                        {{ nego.offered_post.category.name }}
+                                    </small>
+                                </div>
+
+                            </div>
+                        {% else %}
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-info-circle"></i>
+                                No offered item selected.
+                            </p>
+                        {% endif %}
+
+                        <!-- Status -->
+                        <div class="nego-status">
+                            <span class="status-dot
+                                {% if nego.status == 'AC' %}status-accepted
+                                {% elif nego.status == 'DE' %}status-declined
+                                {% else %}status-pending{% endif %}">
+                            </span>
+
+                            {% if nego.status == "AC" %}
+                                Accepted
+                            {% elif nego.status == "DE" %}
+                                Declined
+                            {% else %}
+                                Pending
+                            {% endif %}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-auto">
+                            <a href="{% url 'post_detail_view' nego.requested_post.id %}"
+                               class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-eye"></i>
+                                View Requested Item
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
             </div>
-        </div>
-    {% empty %}
-        <p class="text-muted">You haven't sent any trade proposals yet.</p>
-    {% endfor %}
+
+        {% empty %}
+            <div class="col-12">
+                <div class="empty-marketplace text-center py-5">
+                    <i class="bi bi-arrow-left-right fs-1 text-muted"></i>
+                    <h5 class="mt-3">No trade proposals yet</h5>
+                    <p class="text-muted mb-0">
+                        Your sent trade proposals will appear here.
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
 </div>
 {% endblock %}
