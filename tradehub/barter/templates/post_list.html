@@ -3,14 +3,13 @@
 {% block title %} Barter {% endblock %}
 
 {% block filters %}
-    <form class="d-flex flex-wrap align-items-center gap-2 mb-0"
+    <form class="market-filter-form d-flex flex-nowrap align-items-center gap-2 mb-0"
         method="get"
         action="{% url 'post_list_view' %}">
 
         <!-- Search bar -->
         <input
-            class="form-control"
-            style="flex: 1; min-width: 200px;"
+            class="form-control form-control-sm market-search"
             name="q"
             type="search"
             placeholder="Search trade posts..."
@@ -20,8 +19,7 @@
 
         <!-- Status dropdown -->
         <select
-            class="form-select"
-            style="width: 160px;"
+            class="form-select form-select-sm market-filter-select"
             name="status"
             aria-label="Filter by status"
             onchange="this.form.submit()"
@@ -38,8 +36,7 @@
 
         <!-- Category dropdown -->
         <select
-            class="form-select"
-            style="width: 180px;"
+            class="form-select form-select-sm market-filter-select"
             name="category"
             aria-label="Filter by category"
             onchange="this.form.submit()"
@@ -55,14 +52,15 @@
         </select>
 
         <!-- Search button -->
-        <button class="btn btn-outline-success" type="submit">
-            Search
+        <button class="btn btn-outline-success btn-sm market-filter-btn" type="submit" title="Search">
+            <i class="bi bi-search"></i>
         </button>
 
         <!-- Clear filters -->
         <a href="{% url 'post_list_view' %}"
-        class="btn btn-outline-secondary">
-            Clear
+        class="btn btn-outline-secondary btn-sm market-filter-btn"
+        title="Clear filters">
+            <i class="bi bi-x-circle"></i>
         </a>
 
     </form>

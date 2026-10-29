@@ -165,6 +165,7 @@ form textarea {
     min-height: 110px;
 }
 
+
 /* Marketplace search/filter controls */
 #navbarSupportedContent .form-control,
 #navbarSupportedContent .form-select {
@@ -183,6 +184,55 @@ form textarea {
     color: var(--text-main);
     border-color: var(--brand-green);
     box-shadow: 0 0 0 0.2rem var(--brand-green-soft);
+}
+
+/* Compact marketplace search/filter form */
+.market-filter-form {
+    gap: 0.4rem !important;
+}
+
+.market-filter-form .market-search,
+.market-filter-form .market-filter-select {
+    box-sizing: border-box;
+    font-size: 0.8rem;
+}
+
+.market-filter-form .market-search {
+    flex: 1 1 160px;
+    width: auto;
+    min-width: 120px;
+    max-width: 250px;
+    padding: 0.3rem 0.5rem;
+}
+
+.market-filter-form .market-filter-select {
+    flex: 0 0 130px;
+    width: 130px;
+    padding: 0.3rem 1.8rem 0.3rem 0.5rem;
+}
+
+.market-filter-form .market-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 31px;
+    padding: 0;
+}
+
+/* Responsive filters */
+@media (max-width: 575.98px) {
+    .market-filter-form .market-search {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .market-filter-form .market-filter-select {
+        flex: 1 1 120px;
+        width: auto;
+        min-width: 0;
+    }
 }
 
 /* Authentication and confirmation pages */
