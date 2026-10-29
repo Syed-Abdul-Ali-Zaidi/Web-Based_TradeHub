@@ -88,6 +88,10 @@
                     <span class="small">
                         <i class="bi bi-calendar3 me-1"></i>
                         {{ post.date_created|date:"M d, Y" }}
+
+                        {% if post.is_edited %}
+                            <span class="text-body-secondary">(Edited)</span>
+                        {% endif %}
                     </span>
                 </div>
             </div>

@@ -138,6 +138,7 @@ def post_edit_view(request, post_id):
             post = form.save(commit=False)
             post.owner = request.user  # Assign the logged-in user as the owner
             post.status = 'O'  # Set the status to OPEN
+            post.is_edited = True
             post.save()
             return redirect('post_list_view')  # Redirect back to the feed/list view 
     else:
