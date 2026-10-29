@@ -3,6 +3,7 @@ from .models import TradePost, Negotiation, Offer, Category, Advertisement
 from .forms import NegotiationForm, CounterOfferForm, TradePostForm, UserRegistrationForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
+from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.utils import timezone
@@ -267,24 +268,106 @@ def negotiation_detail_view(request, negotiation_id):
     return render(request, 'negotiation_detail.html', {'form': form, 'negotiation': negotiation, 'chat_messages': chat_messages})
 
 # 10
+@login_required
 def negotiation_accept_view(request, negotiation_id):
-    ''' mark requested post as traded
-        mark all requested post's pending negos as declined except current nego 
-        mark offered post as traded
-        mark offered post's pending negos as declined
-        mark mark all all negos as withdrawn where offered_post is current offered post except current nego
-        '''
-    negotiation = get_object_or_404(
-                    Negotiation,
-                    Q(proposer=request.user) | Q(requested_post__owner=request.user),   # Two people can Accept a Negotiation: PostOwner or OfferOwner
-                    pk=negotiation_id
-                    )
 
     if request.method == "POST":
-        pass
+        with transaction.atomic():
 
-    return render(request, 'negotiation_accept.html', {'negotiation': negotiation})
+            # Lock the negotiation to prevent simultaneous acceptance.
+            negotiation = get_object_or_404(
+                Negotiation.objects.select_for_update(),
+                Q(proposer=request.user) |
+                Q(requested_post__owner=request.user),
+                pk=negotiation_id
+            )
 
+            # Only pending negotiations can be accepted.
+            if negotiation.status != "PE":
+                return redirect(
+                    "post_detail_view",
+                    post_id=negotiation.requested_post.pk
+                )
+
+            requested_post = negotiation.requested_post
+            offered_post = negotiation.offered_post
+
+            # Determine whose turn it is to respond.
+            latest_offer = negotiation.offers.order_by(
+                "-date_created", "-pk"
+            ).first()
+
+            if latest_offer is None:
+                # Initially, the requested post's owner responds.
+                next_responder = requested_post.owner
+            elif latest_offer.sender_id == requested_post.owner_id:
+                next_responder = negotiation.proposer
+            else:
+                next_responder = requested_post.owner
+
+            # Do not allow the other participant to accept out of turn.
+            if request.user != next_responder:
+                return redirect(
+                    "post_detail_view",
+                    post_id=requested_post.pk
+                )
+
+            # Mark the current negotiation as accepted.
+            negotiation.status = "AC"
+            negotiation.save(update_fields=["status"])
+
+            # Mark the requested post as traded.
+            requested_post.status = "T"
+            requested_post.save(update_fields=["status"])
+
+            # Keep track of all posts involved in this trade.
+            traded_post_ids = [requested_post.pk]
+
+            # The offered post is optional.
+            if offered_post is not None:
+                offered_post.status = "T"
+                offered_post.save(update_fields=["status"])
+                traded_post_ids.append(offered_post.pk)
+
+            # Decline other pending negotiations requesting either
+            # of the posts that have now been traded.
+            Negotiation.objects.filter(
+                status="PE",
+                requested_post_id__in=traded_post_ids
+            ).exclude(
+                pk=negotiation.pk
+            ).update(status="DE")
+
+            # Withdraw other pending negotiations offering the same
+            # offered post, except those already declined above.
+            if offered_post is not None:
+                Negotiation.objects.filter(
+                    status="PE",
+                    offered_post=offered_post
+                ).exclude(
+                    pk=negotiation.pk
+                ).exclude(
+                    requested_post_id__in=traded_post_ids
+                ).update(status="WI")
+
+        return redirect(
+            "post_detail_view",
+            post_id=requested_post.pk
+        )
+
+    # GET request: show the confirmation page.
+    negotiation = get_object_or_404(
+        Negotiation,
+        Q(proposer=request.user) |
+        Q(requested_post__owner=request.user),
+        pk=negotiation_id
+    )
+
+    return render(
+        request,
+        "negotiation_accept.html",
+        {"negotiation": negotiation}
+    )
 
 # 11
 @login_required 
