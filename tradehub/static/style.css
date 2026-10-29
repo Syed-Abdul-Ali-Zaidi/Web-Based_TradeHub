@@ -117,13 +117,22 @@ a:hover {
 }
 
 /* Forms used on authentication and confirmation pages */
-.auth-card form,
-.confirm-card form,
+.auth-card > form,
+.confirm-card > form,
 form.form {
     padding: 1.5rem;
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-lg);
     background-color: var(--bg-card);
+}
+
+/* Keep inline forms, such as the Logout form, compact */
+.auth-card .d-flex form,
+.confirm-card .d-flex form {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
 }
 
 form p {
