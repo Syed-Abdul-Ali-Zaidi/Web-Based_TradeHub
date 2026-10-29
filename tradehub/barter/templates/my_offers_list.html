@@ -2,6 +2,44 @@
 
 {% block title %} Barter {% endblock %}
 
+{% block filters %}
+    <form class="market-filter-form d-flex flex-nowrap align-items-center gap-2 mb-0"
+        method="get"
+        action="{% url 'my_offers_list_view' user.id %}">
+
+
+        <!-- Status dropdown -->
+        <select
+            class="form-select form-select-sm market-filter-select"
+            name="status"
+            aria-label="Filter by status"
+            onchange="this.form.submit()"
+        >
+            <option value="">All Statuses</option>
+
+            {% for value, label in status_choices %}
+                <option value="{{ value }}"
+                    {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- Search button -->
+        <button class="btn btn-outline-success btn-sm market-filter-btn" type="submit" title="Search">
+            <i class="bi bi-search"></i>
+        </button>
+
+        <!-- Clear filters -->
+        <a href="{% url 'my_offers_list_view' user.id %}"
+        class="btn btn-outline-secondary btn-sm market-filter-btn"
+        title="Clear filters">
+            <i class="bi bi-x-circle"></i>
+        </a>
+
+    </form>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid marketplace-container py-4">
 

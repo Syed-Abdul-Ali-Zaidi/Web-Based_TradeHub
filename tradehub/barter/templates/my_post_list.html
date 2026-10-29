@@ -57,7 +57,7 @@
         </button>
 
         <!-- Clear filters -->
-        <a href="{% url 'post_list_view' %}"
+        <a href="{% url 'my_post_list_view' user.id %}"
         class="btn btn-outline-secondary btn-sm market-filter-btn"
         title="Clear filters">
             <i class="bi bi-x-circle"></i>

@@ -396,6 +396,8 @@ def my_offers_list_view(request, user_id):
     if request.user.pk != user_id:
             return redirect('post_list_view')  # Redirect to the main feed if the user is not the owner
 
+    status_id = request.GET.get("status")
+
     my_negotiations = Negotiation.objects.filter(proposer= request.user
                         ).select_related(   # select_related all fetch specified objects along with Nego obj
                             'requested_post', 
@@ -403,7 +405,14 @@ def my_offers_list_view(request, user_id):
                             'requested_post__owner'
                         ).order_by('-date_created')
 
-    return render(request, 'my_offers_list.html', {'my_negotiations': my_negotiations})
+    if status_id:
+            my_negotiations = my_negotiations.filter(status=status_id)
+
+    return render(request, 'my_offers_list.html', {
+        'my_negotiations': my_negotiations,
+        'status': status_id,
+        'status_choices': Negotiation.NEGOTIATION_STATUS_CHOICES,
+    })
 
 # 13
 def register_view(request):
