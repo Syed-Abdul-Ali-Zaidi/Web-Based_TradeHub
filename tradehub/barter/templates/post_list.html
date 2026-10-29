@@ -135,9 +135,21 @@
                                     {{ post.category.name }}
                                 </div>
 
-                                <h5 class="card-title fw-semibold">
-                                    {{ post.title }}
-                                </h5>
+                                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                    <h5 class="card-title fw-semibold mb-0">
+                                        {{ post.title }}
+                                    </h5>
+
+                                    {% if post.status == "O" %}
+                                        <span class="badge bg-success-subtle text-success-emphasis post-status-badge">
+                                            Open
+                                        </span>
+                                    {% elif post.status == "T" %}
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis post-status-badge">
+                                            Traded
+                                        </span>
+                                    {% endif %}
+                                </div>
 
                                 <p class="card-text text-muted small post-description">
                                     {{ post.description|truncatechars:100 }}
@@ -159,6 +171,15 @@
 
                                         {% if request.user.is_authenticated and request.user == post.owner %}
 
+                                            {% if post.status == "O" %}
+                                            <a href="{% url 'post_edit_view' post.id %}"
+                                                class="btn btn-outline-primary btn-sm delete-post-btn"
+                                                aria-label="Edit {{ post.title }}"
+                                                title="Edit post">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            {% endif %}
+                                            
                                             <a href="{% url 'post_delete_view' post.id %}"
                                                 class="btn btn-outline-danger btn-sm delete-post-btn"
                                                 aria-label="Delete {{ post.title }}"

@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.post_list_view, name='post_list_view'),
     path('user/<int:user_id>/posts/', views.my_post_list_view, name='my_post_list_view'),
     path('posts/new/', views.post_create_view, name='post_create_view'),
+    path('posts/<int:post_id>/edit/', views.post_edit_view, name='post_edit_view'),
     path('posts/<int:post_id>/delete/', views.post_delete_view, name='post_delete_view'),
     path('posts/<int:post_id>/', views.post_detail_view, name='post_detail_view'),    
     path('<int:post_id>/create_offer/', views.negotiation_create_view, name='negotiation_create_view'),
