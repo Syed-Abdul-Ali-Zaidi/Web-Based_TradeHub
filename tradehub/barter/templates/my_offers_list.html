@@ -47,64 +47,66 @@
                             <strong>{{ nego.requested_post.owner.username }}</strong>
                         </p>
 
-                        <hr>
+                        <div class="mt-auto">
+                            <hr>
 
-                        <!-- Your offered item -->
-                        <div class="post-category">
-                            <i class="bi bi-arrow-up-right-circle"></i>
-                            Your Offered Item
-                        </div>
-
-                        {% if nego.offered_post %}
-                            <div class="d-flex align-items-center gap-3 mb-3">
-
-                                {% if nego.offered_post.image %}
-                                    <img src="{{ nego.offered_post.image.url }}"
-                                         alt="{{ nego.offered_post.title }}"
-                                         class="rounded"
-                                         style="width: 70px; height: 70px; object-fit: cover;">
-                                {% else %}
-                                    <div class="post-image-placeholder rounded"
-                                         style="width: 70px; height: 70px; flex-shrink: 0;">
-                                        <i class="bi bi-box-seam"></i>
-                                    </div>
-                                {% endif %}
-
-                                <div>
-                                    <h6 class="fw-semibold mb-1">
-                                        {{ nego.offered_post.title }}
-                                    </h6>
-                                    <small class="text-muted">
-                                        {{ nego.offered_post.category.name }}
-                                    </small>
-                                </div>
-
+                            <!-- Your offered item -->
+                            <div class="post-category">
+                                <i class="bi bi-arrow-up-right-circle"></i>
+                                Your Offered Item
                             </div>
-                        {% else %}
-                            <p class="text-muted small mb-3">
-                                <i class="bi bi-info-circle"></i>
-                                No offered item selected.
-                            </p>
-                        {% endif %}
 
-                        <!-- Status -->
-                        <div class="nego-status">
-                            <span class="status-dot
-                                {% if nego.status == 'AC' %}status-accepted
-                                {% elif nego.status == 'DE' %}status-declined
-                                {% elif nego.status == 'WI' %}status-withdrawn
-                                {% else %}status-pending{% endif %}">
-                            </span>
+                            {% if nego.offered_post %}
+                                <div class="d-flex align-items-center gap-3 mb-3">
 
-                            {% if nego.status == "AC" %}
-                                Accepted
-                            {% elif nego.status == "DE" %}
-                                Declined
-                            {% elif nego.status == "WI" %}
-                                Withdrawn
+                                    {% if nego.offered_post.image %}
+                                        <img src="{{ nego.offered_post.image.url }}"
+                                            alt="{{ nego.offered_post.title }}"
+                                            class="rounded"
+                                            style="width: 70px; height: 70px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="post-image-placeholder rounded"
+                                            style="width: 70px; height: 70px; flex-shrink: 0;">
+                                            <i class="bi bi-box-seam"></i>
+                                        </div>
+                                    {% endif %}
+
+                                    <div>
+                                        <h6 class="fw-semibold mb-1">
+                                            {{ nego.offered_post.title }}
+                                        </h6>
+                                        <small class="text-muted">
+                                            {{ nego.offered_post.category.name }}
+                                        </small>
+                                    </div>
+
+                                </div>
                             {% else %}
-                                Pending
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-info-circle"></i>
+                                    No offered item selected.
+                                </p>
                             {% endif %}
+
+                            <!-- Status -->
+                            <div class="nego-status">
+                                <span class="status-dot
+                                    {% if nego.status == 'AC' %}status-accepted
+                                    {% elif nego.status == 'DE' %}status-declined
+                                    {% elif nego.status == 'WI' %}status-withdrawn
+                                    {% else %}status-pending{% endif %}">
+                                </span>
+
+                                {% if nego.status == "AC" %}
+                                    Accepted
+                                {% elif nego.status == "DE" %}
+                                    Declined
+                                {% elif nego.status == "WI" %}
+                                    Withdrawn
+                                {% else %}
+                                    Pending
+                                {% endif %}
+                            </div>
                         </div>
 
                         <!-- Actions -->
