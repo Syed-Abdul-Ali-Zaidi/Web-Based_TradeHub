@@ -30,6 +30,7 @@
             <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'post_list_view' %}">Marketplace</a>
             </li>
+                        
             {% if user.is_authenticated %}
                 <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{% url 'my_post_list_view' user.id %}" >My Listings</a>
@@ -38,6 +39,9 @@
                 <a class="nav-link active" aria-current="page" href="{% url 'my_offers_list_view' user.id %}" >My Offerings</a>
                 </li>
             {% endif %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'about_us_view' %}">About Us</a>
+            </li>
         </ul>
 
         {% block filters %}{% endblock %}

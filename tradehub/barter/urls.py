@@ -14,6 +14,8 @@ urlpatterns = [
     path('<int:negotiation_id>/details_offer/', views.negotiation_detail_view, name='negotiation_detail_view'),
     path('<int:user_id>/my_offers/', views.my_offers_list_view, name='my_offers_list_view'),
     path('register/', views.register_view, name='register_view'),
+    path('about_us/', views.about_us_view, name='about_us_view'),
+
 ]
 
 # Add urls in sequence as Views 

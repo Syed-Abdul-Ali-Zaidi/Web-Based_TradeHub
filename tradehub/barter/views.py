@@ -20,6 +20,8 @@ from django.utils import timezone
 
 # 10. register_view(request)
 
+#13 about_us_view(request) {Gives About us page}
+
 # Create your views here.
 def index(request):
     posts = TradePost.objects.filter(status='O')
@@ -314,4 +316,8 @@ def register_view(request):
 
     return render(request, 'registration/register.html', {'form': form})
 
+
+def about_us_view(request):
+    """Renders the About Us page."""
+    return render(request, 'about_us.html')
 

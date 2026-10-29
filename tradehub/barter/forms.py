@@ -64,7 +64,7 @@ class CounterOfferForm(forms.ModelForm):
         }
 
 class UserRegistrationForm(UserCreationForm):
-    emial = forms.EmailField()
+    email = forms.EmailField()
     class Meta:
         model = User
-        fields = ('username', 'emial', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2')
