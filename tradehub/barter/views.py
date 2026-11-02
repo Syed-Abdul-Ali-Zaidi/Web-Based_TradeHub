@@ -268,25 +268,51 @@ def negotiation_withdraw_view(request, negotiation_id):
 @login_required
 def negotiation_detail_view(request, negotiation_id):
     negotiation = get_object_or_404(
-                    Negotiation,
-                    Q(proposer=request.user) | Q(requested_post__owner=request.user),   # Two people can counter Offer a Negotiation: PostOwner or OfferOwner
-                    pk=negotiation_id
-                    )
+        Negotiation,
+        Q(proposer=request.user) | Q(requested_post__owner=request.user),
+        pk=negotiation_id
+    )
 
-    chat_messages = negotiation.offers.all().order_by('date_created') # here "offers" is the related_name(relationship)
+    requested_post = negotiation.requested_post
+    offered_post = negotiation.offered_post
+    chat_messages = negotiation.offers.all().order_by('date_created')
+
+    # Determine next responder logic (matching acceptance rules)
+    latest_offer = negotiation.offers.order_by("-date_created", "-pk").first()
+    if latest_offer is None:
+        next_responder = requested_post.owner
+    elif latest_offer.sender_id == requested_post.owner_id:
+        next_responder = negotiation.proposer
+    else:
+        next_responder = requested_post.owner
+
+    can_respond = (negotiation.status == 'PE' and request.user == next_responder)
 
     if request.method == "POST":
+        if not can_respond:
+            return redirect('negotiation_detail_view', negotiation_id=negotiation.pk)
+        
         form = CounterOfferForm(request.POST)
         if form.is_valid():
             counter_offer = form.save(commit=False)
             counter_offer.negotiation = negotiation
             counter_offer.sender = request.user
             counter_offer.save()
-            return redirect('negotiation_detail_view', negotiation_id= negotiation.pk)
+            return redirect('negotiation_detail_view', negotiation_id=negotiation.pk)
     else:
         form = CounterOfferForm()
 
-    return render(request, 'negotiation_detail.html', {'form': form, 'negotiation': negotiation, 'chat_messages': chat_messages})
+    context = {
+        'form': form,
+        'negotiation': negotiation,
+        'requested_post': requested_post,
+        'offered_post': offered_post,
+        'chat_messages': chat_messages,
+        'next_responder': next_responder,
+        'can_respond': can_respond,
+    }
+
+    return render(request, 'negotiation_detail.html', context)
 
 # 11
 @login_required
