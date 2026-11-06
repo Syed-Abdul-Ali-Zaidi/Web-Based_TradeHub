@@ -138,7 +138,7 @@
                                 {% if request.user.is_authenticated and request.user == post.owner %}
 
                                     {% if post.status == "O" %}
-                                    
+
                                         <a href="{% url 'post_edit_view' post.id %}"
                                             class="btn btn-outline-primary btn-sm delete-post-btn"
                                             aria-label="Edit {{ post.title }}"
@@ -147,10 +147,10 @@
                                         </a>
 
                                         <a href="{% url 'post_delete_view' post.id %}"
-                                        class="btn btn-outline-danger btn-sm delete-post-btn"
-                                        aria-label="Delete {{ post.title }}"
-                                        title="Delete post">
-                                        <i class="bi bi-trash3"></i>
+                                            class="btn btn-outline-danger btn-sm delete-post-btn"
+                                            aria-label="Delete {{ post.title }}"
+                                            title="Delete post">
+                                            <i class="bi bi-trash3"></i>
                                         </a>
 
                                     {% endif %}
