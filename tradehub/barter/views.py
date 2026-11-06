@@ -149,8 +149,9 @@ def post_edit_view(request, post_id):
 # 5
 @login_required
 def post_delete_view(request, post_id):
-    """Allows the owner of a trade post to delete it."""
-    post = get_object_or_404(TradePost, pk=post_id, owner=request.user)
+    """Allows the owner to delete only OPEN trade posts."""
+    post = get_object_or_404(TradePost, pk=post_id, owner=request.user, status='O')
+
 
     if request.method == "POST":
         post.delete()
