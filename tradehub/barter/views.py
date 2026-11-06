@@ -276,7 +276,7 @@ def negotiation_detail_view(request, negotiation_id):
 
     requested_post = negotiation.requested_post
     offered_post = negotiation.offered_post
-    chat_messages = negotiation.offers.all().order_by('date_created')
+    chat_messages = negotiation.offers.all().order_by('date_created', 'pk')
 
     # Determine next responder logic (matching acceptance rules)
     latest_offer = negotiation.offers.order_by("-date_created", "-pk").first()

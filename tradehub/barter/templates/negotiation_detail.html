@@ -24,50 +24,6 @@
         </div>
     </div>
 
-    <!-- Top Action Toolbar -->
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        <a href="{% url 'post_detail_view' requested_post.pk %}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-eye"></i> View Requested Post
-        </a>
-        {% if offered_post %}
-            <a href="{% url 'post_detail_view' offered_post.pk %}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-eye"></i> View Offered Post
-            </a>
-        {% endif %}
-
-        {% if negotiation.status == 'PE' %}
-            <!-- Accept Trade: Next responder only -->
-            {% if request.user == next_responder %}
-                <form action="{% url 'negotiation_accept_view' negotiation.pk %}" method="POST" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success btn-sm">
-                        <i class="bi bi-check-lg"></i> Accept Trade
-                    </button>
-                </form>
-            {% endif %}
-
-            <!-- Decline: Requested post owner only -->
-            {% if request.user == requested_post.owner %}
-                <form action="{% url 'negotiation_decline_view' negotiation.pk %}" method="POST" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to decline this negotiation?');">
-                        <i class="bi bi-x-lg"></i> Decline Trade
-                    </button>
-                </form>
-            {% endif %}
-
-            <!-- Withdraw: Proposer only -->
-            {% if request.user == negotiation.proposer %}
-                <form action="{% url 'negotiation_withdraw_view' negotiation.pk %}" method="POST" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-warning btn-sm" onclick="return confirm('Are you sure you want to withdraw this proposal?');">
-                        <i class="bi bi-arrow-counterclockwise"></i> Withdraw Offer
-                    </button>
-                </form>
-            {% endif %}
-        {% endif %}
-    </div>
-
     <!-- 2. Two Item Cards Side-by-Side (Desktop) / Stacked (Mobile) -->
     <div class="row g-4 mb-5">
         <!-- Requested Item Card -->
@@ -157,19 +113,25 @@
         </div>
     </div>
 
-    <!-- 4. Counter-Offer Form or Status Messaging -->
+    <!-- 4. Counter-Offer Form and Negotiation Actions -->
+
     {% if negotiation.status == 'PE' %}
+
+        <!-- Counter-Offer Form -->
         {% if can_respond %}
-            <div class="card shadow-sm border-success">
+            <div class="card shadow-sm border-success mb-3">
                 <div class="card-header bg-success bg-opacity-10 text-success fw-bold">
                     <i class="bi bi-reply"></i> Send a Counter-Offer / Reply
                 </div>
+
                 <div class="card-body">
                     <form method="POST">
                         {% csrf_token %}
+
                         <div class="mb-3">
                             {{ form.as_p }}
                         </div>
+
                         <button type="submit" class="btn btn-success">
                             <i class="bi bi-send"></i> Send Counter-Offer
                         </button>
@@ -177,13 +139,47 @@
                 </div>
             </div>
         {% else %}
-            <div class="alert alert-info text-center py-3" role="alert">
-                <i class="bi bi-hourglass-split"></i> Waiting for response from <strong>{{ next_responder.username }}</strong>...
+            <div class="alert alert-info text-center py-3 mb-3">
+                <i class="bi bi-hourglass-split"></i>
+                Waiting for response from
+                <strong>{{ next_responder.username }}</strong>...
             </div>
         {% endif %}
+
+        <!-- Negotiation Actions -->
+        <div class="d-flex flex-wrap justify-content-end gap-2">
+
+            <!-- Accept: Next responder only -->
+            {% if can_respond %}
+                <a href="{% url 'negotiation_accept_view' negotiation.pk %}"
+                class="btn btn-success">
+                    <i class="bi bi-check-lg"></i> Accept Trade
+                </a>
+            {% endif %}
+
+            <!-- Decline: Requested post owner only -->
+            {% if request.user == requested_post.owner %}
+                <a href="{% url 'negotiation_decline_view' negotiation.pk %}"
+                class="btn btn-outline-danger">
+                    <i class="bi bi-x-lg"></i> Decline Trade
+                </a>
+            {% endif %}
+
+            <!-- Withdraw: Proposer only -->
+            {% if request.user == negotiation.proposer %}
+                <a href="{% url 'negotiation_withdraw_view' negotiation.pk %}"
+                class="btn btn-outline-warning">
+                    <i class="bi bi-arrow-counterclockwise"></i> Withdraw Offer
+                </a>
+            {% endif %}
+
+        </div>
+
     {% else %}
-        <div class="alert alert-secondary text-center py-4" role="alert">
-            <i class="bi bi-lock"></i> This negotiation is closed because it was marked as <strong>{{ negotiation.get_status_display }}</strong>.
+        <div class="alert alert-secondary text-center py-4">
+            <i class="bi bi-lock"></i>
+            This negotiation is closed because it was marked as
+            <strong>{{ negotiation.get_status_display }}</strong>.
         </div>
     {% endif %}
 
