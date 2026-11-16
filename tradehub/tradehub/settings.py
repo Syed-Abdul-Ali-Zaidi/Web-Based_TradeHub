@@ -86,11 +86,16 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": DB_NAME,
-        "USER": DB_USERNAME,
-        "PASSWORD": DB_PASSWORD,
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
+        "NAME": os.environ["DB_NAME"],
+        "USER": os.environ["DB_USER"],
+        "PASSWORD": os.environ["DB_PASSWORD"],
+        "HOST": os.environ["DB_HOST"],
+        "PORT": os.environ["DB_PORT"],
+        "OPTIONS": {
+            "ssl": {
+                "ca": os.environ["DB_SSL_CA"],
+            },
+        },
     }
 }
 # DATABASES = {
