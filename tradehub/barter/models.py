@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import os
+from cloudinary_storage.storage import VideoMediaCloudinaryStorage
 
 # Create your models here.
 class Category(models.Model):
@@ -64,7 +65,7 @@ class Advertisement(models.Model):
 
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to='advertisement_images/', blank=True, null=True)
-    video = models.FileField(upload_to='advertisement_videos/', blank=True, null=True)
+    video = models.FileField(upload_to='advertisement_videos/', storage=VideoMediaCloudinaryStorage(), blank=True, null=True)
     target_url = models.URLField(max_length=500, blank=True, null=True)
     placement = models.CharField(max_length=2, choices=ADVERTISEMENT_PLACEMENT_CHOICES)
     is_active = models.BooleanField(default=True)
